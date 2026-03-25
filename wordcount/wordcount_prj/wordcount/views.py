@@ -21,4 +21,36 @@ def result(request):
             word_dictionary[word] = 1
     
     
-    return render(request, 'result.html',{'alltext': entered_text, 'dictionary':word_dictionary.items()})   # result.html에 변수 전달하기
+    # 가장 많이 입력된 단어
+    max_count = 0
+    most_frequent = []
+    
+    if word_dictionary:
+        max_count = max(word_dictionary.values())
+        most_frequent = [word for word, count in word_dictionary.items() if count == max_count]
+
+    
+    
+    # 글자 수 세기 (띄어쓰기 포함)
+    total_len = len(entered_text)
+    
+    # 글자 수 (띄어쓰기 제외)
+    only_letter = len(entered_text.replace(' ',''))
+    
+    
+    
+    
+    return render(request, 'result.html',{
+        'alltext': entered_text, 
+        'dictionary':word_dictionary.items(),
+        'word_count':len(word_list),
+        'max_count':max_count,
+        'most_frequent':most_frequent,
+        'total_len':total_len,
+        'only_letter':only_letter,
+        
+        })   # result.html에 변수 전달하기
+
+def hello(request):
+    name = request.GET['name'] # index에서 입력한 이름 받기
+    return render(request, 'hello.html',{'name':name})
