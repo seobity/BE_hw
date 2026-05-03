@@ -13,11 +13,15 @@ def create(request):
     if request.method == "POST":
         title = request.POST.get('title')
         content = request.POST.get('content')
+        image = request.FILES.get('image')
+        video = request.FILES.get('video')
         
-        Post.objects.create(
+        post = Post.objects.create(
             title = title,
             content = content,
-            author = request.user  # 로그인한 사용자를 게시글의 작성자로 저장
+            author = request.user,  # 로그인한 사용자를 게시글의 작성자로 저장
+            image = image,
+            video = video,
         )
         
         return redirect('blog:list') # render와 redirect 차이
@@ -33,8 +37,19 @@ def update(request, id):
     if request.method == "POST":
         post.title = request.POST.get('title')
         post.content = request.POST.get('content')
+        image = request.FILES.get('image')
+        video = request.FILES.get('video')
+        
+        if image:
+            post.image.delete()
+            post.image = image
+        
+        if video:
+            post.video.delete()
+            post.video = video
+        
         post.save()
-        return redirect('blog:detail',id)
+        return redirect('blog:detail',id=post.id)
     
     return render(request, 'blog/update.html', {'post':post})
 
