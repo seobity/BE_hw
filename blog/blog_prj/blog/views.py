@@ -9,8 +9,9 @@ def list(request):
     category_id = request.GET.get('category')
     
     if category_id:
-        category = get_object_or_404(Category, id=category_id)
-        posts = category.posts.all().order_by('-id')
+        # category = get_object_or_404(Category, id=category_id)
+        # posts = category.posts.all().order_by('-id')
+        posts = Post.objects.filter(category__id=category_id).order_by('-id')
     else:
         posts = Post.objects.all().order_by('-id')
         
@@ -95,9 +96,16 @@ def like(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     user = request.user
     
-    if user in post.like.all():
-        post.like.remove(user)
+    # if user in post.like.all():  # 정참조 방식
+    #     post.like.remove(user)
+    # else:
+    #     post.like.add(user)
+    
+    if post in user.like_posts.all():  # 역참조 방식
+        user.like_posts.remove(post)
+        
     else:
-        post.like.add(user)
+        user.like_posts.add(post)
+    
     return redirect('blog:detail', post_id)    
     
